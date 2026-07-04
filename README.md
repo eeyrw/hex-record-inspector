@@ -186,8 +186,6 @@ src/hexinspector/
 
 ## Related Projects
 
-- [Intel HEX → bin](https://github.com/eeyrw/hex-record-inspector) (companion
-  tooling)
 - Intel HEX is specified in [Wikipedia](https://en.wikipedia.org/wiki/Intel_HEX)
 
 ## License
