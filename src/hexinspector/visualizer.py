@@ -20,7 +20,8 @@ def _addr_width(segments: list[Segment]) -> int:
 
 def _ruler(per_line: int, addr_w: int) -> str:
     cols = "  ".join(f"{i:X}" for i in range(per_line))
-    return f"  {'':>{addr_w}}  {cols:<{per_line * 3 - 1}} \u2502"
+    prefix = " " * (addr_w + 3)
+    return f"{prefix}\u2502 {cols:<{per_line * 3 - 1}} \u2502"
 
 
 def _str_seg_preview(seg: Segment, max_bytes: int, per_line: int, addr_w: int) -> list[str]:
@@ -31,7 +32,7 @@ def _str_seg_preview(seg: Segment, max_bytes: int, per_line: int, addr_w: int) -
         h = " ".join(f"{b:02X}" for b in chunk)
         a = "".join(_printable(b) for b in chunk)
         addr = seg.start + off
-        lines.append(f"  {addr:0{addr_w}X}  {h:<{per_line * 3 - 1}} \u2502 {a}")
+        lines.append(f"  {addr:0{addr_w}X} \u2502 {h:<{per_line * 3 - 1}} \u2502 {a}")
     return lines
 
 
@@ -50,10 +51,11 @@ def _gap_str(gap: int) -> str:
 def _block_label(
     idx: int, start: int, end: int, total_data: int, total_gap: int, addr_w: int
 ) -> str:
-    base = f" block {idx}  0x{start:0{addr_w}X} \u2013 0x{end:0{addr_w}X}  {_size_str(total_data)}"
+    addr_range = f"0x{start:0{addr_w}X} \u2013 0x{end:0{addr_w}X}"
+    base = f"=== block {idx}  {addr_range}  {_size_str(total_data)}"
     if total_gap:
         base += f"  (+{_gap_str(total_gap)} gaps)"
-    return base
+    return base + " ==="
 
 
 def _render_seg_preview(seg: Segment, max_bytes: int, per_line: int, addr_w: int) -> list[str]:
