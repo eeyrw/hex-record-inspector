@@ -29,10 +29,15 @@ def _str_seg_preview(seg: Segment, max_bytes: int, per_line: int, addr_w: int) -
     n = min(max_bytes, seg.size)
     for off in range(0, n, per_line):
         chunk = seg.read(off, min(per_line, n - off))
-        h = " ".join(f"{b:02X}" for b in chunk)
+        h_parts = [f"{b:02X}" for b in chunk]
+        if len(h_parts) < per_line:
+            h_parts.extend(["--"] * (per_line - len(h_parts)))
+        h = " ".join(h_parts)
         a = "".join(_printable(b) for b in chunk)
+        if len(chunk) < per_line:
+            a = f"{a:<{per_line}}"
         addr = seg.start + off
-        lines.append(f"  {addr:0{addr_w}X} \u2502 {h:<{per_line * 3 - 1}} \u2502 {a}")
+        lines.append(f"  {addr:0{addr_w}X} \u2502 {h} \u2502 {a}")
     return lines
 
 
@@ -70,7 +75,7 @@ def _sep_line(width: int) -> str:
 
 
 def _block_sep(per_line: int, addr_w: int) -> str:
-    width = 2 + addr_w + 2 + per_line * 3 - 1 + 2 + per_line
+    width = addr_w + per_line * 4 + 7
     return _sep_line(width)
 
 
